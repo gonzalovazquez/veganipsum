@@ -1,29 +1,26 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import Head from 'next/head'
+import { InferGetStaticPropsType } from 'next'
 /** Material UI Components */
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
-import Button from '@material-ui/core/Button'
-import CircularProgress from '@material-ui/core/CircularProgress'
 import List from '@material-ui/core/List'
 /** Custom Components */
 import todoAPI from '../api/todo'
 import TodoComponent from '../components/Todo/Todo'
 
+type Todos = {
+  userId: number
+  id: number
+  title: string
+  completed: boolean
+}
+
 /**
  * Main Index Page to render on homepage
  */
-function IndexPage() {
-  const [todos, setTodos] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
-  // Fetch todos from API
-  const fetchData = async () => {
-    setIsLoading(true)
-    const result = await todoAPI()
-    setTodos(result)
-    setIsLoading(false)
-  }
+function IndexPage({ todos }) {
   return (
     <React.Fragment>
       <Head>
@@ -42,24 +39,29 @@ function IndexPage() {
             World
           </Typography>
         </Grid>
-        <Grid item xs={12}>
-          <Button variant="contained" color="primary" onClick={() => fetchData()}>
-            Fetch Data
-          </Button>
-        </Grid>
         <Grid item xs={12} md={6}>
           <List>
-            {isLoading ? <CircularProgress />
-              : <TodoComponent
-                todos={todos}
-                // deleteTodo={(id) => setTodos(todos.filter((itm) => itm.id !== id))}
-              />
-            }
+            <TodoComponent
+              todos={todos}
+              // deleteTodo={(id) => setTodos(todos.filter((itm) => itm.id !== id))}
+            />
           </List>
         </Grid>
       </Grid>
     </React.Fragment>
   )
+}
+
+// This function gets called at build time
+export async function getStaticProps() {
+  const todos: Todos[] = await todoAPI()
+  // By returning { props: todos }, the Blog component
+  // will receive `posts` as a prop at build time
+  return {
+    props: {
+      todos,
+    }
+  }
 }
 
 /**

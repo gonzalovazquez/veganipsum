@@ -3,6 +3,6 @@
  * @returns Promise
  */
 export default async () => {
-  const res = await fetch('//jsonplaceholder.typicode.com/todos')
+  const res = await fetch('https://jsonplaceholder.typicode.com/todos')
   return res.json()
 }
