@@ -1,14 +1,28 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import Head from 'next/head'
-import { InferGetStaticPropsType } from 'next'
 /** Material UI Components */
-import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
-import List from '@material-ui/core/List'
+import {
+  Grid,
+  Typography,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
+  Button,
+  Input,
+  Card,
+  CardContent,
+  Box
+} from '@material-ui/core';
+
 /** Custom Components */
 import todoAPI from '../api/todo'
 import TodoComponent from '../components/Todo/Todo'
+import veganIpsumGenerator from '../utils/veganipsumGenerator'
+
+/** Mock */
+import fruits from '../mocks/fruits'
 
 type Todos = {
   userId: number
@@ -20,48 +34,84 @@ type Todos = {
 /**
  * Main Index Page to render on homepage
  */
-function IndexPage({ todos }) {
+function IndexPage() {
+  const [size, setSize] = React.useState('long')
+  const [repeat, setRepeat] = React.useState(5)
+  const [text, setText] = React.useState({ __html: ' ' })
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSize((event.target as HTMLInputElement).value);
+  }
+
+  const handleRepeat = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRepeat(event.target.value)
+  }
+
+  const generateText = () => {
+    setText( { __html: ' ' } )
+    const generatedOutput = veganIpsumGenerator(size, repeat)
+    setText(generatedOutput)
+  }
+
   return (
     <React.Fragment>
       <Head>
-        <title>Create Next App</title>
+        <title>Veganipsum</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Grid container>
-        <Grid item xs={6}>
-          <Typography variant="h1" component="h1" gutterBottom>
-            Hello
+      <div style={{ width: '100%' }}>
+        <Box display="flex" justifyContent="center" m={1} p={1} bgcolor="background.paper">
+          <Box p={1} bgcolor="grey.300">
+            <Typography variant="h1" component="h2" gutterBottom>
+              Veganipsum
+            </Typography>
+          </Box>
+        </Box>
+        <Box display="flex" justifyContent="center" m={1} p={1} bgcolor="background.paper">
+          <Box p={1} bgcolor="grey.300">
+          <Typography variant="body1" gutterBottom>
+            body1. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
+            unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
+            dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
           </Typography>
-        </Grid>
-        <Grid item xs={6}>
-          <Typography variant="h1" component="h1" gutterBottom>
-            World
-          </Typography>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <List>
-            <TodoComponent
-              todos={todos}
-              // deleteTodo={(id) => setTodos(todos.filter((itm) => itm.id !== id))}
-            />
-          </List>
-        </Grid>
-      </Grid>
+          </Box>
+        </Box>
+        <Box display="flex" justifyContent="center" m={1} p={1} bgcolor="background.paper">
+          <Box p={1} bgcolor="grey.300">
+            <Input type="number" defaultValue="5" value={repeat} onChange={handleRepeat}/>
+          </Box>
+        </Box>
+        <Box display="flex" justifyContent="center" m={1} p={1} bgcolor="background.paper">
+          <Box p={1} bgcolor="grey.300">
+            <FormControl component="fieldset">
+              <RadioGroup aria-label="size" name="size" value={size} onChange={handleChange}>
+                <FormControlLabel value="Large" control={<Radio />} label="Large" />
+                <FormControlLabel value="Medium" control={<Radio />} label="Medium" />
+                <FormControlLabel value="Small" control={<Radio />} label="Small" />
+              </RadioGroup>
+            </FormControl>
+          </Box>
+        </Box>
+        <Box display="flex" justifyContent="center" m={1} p={1} bgcolor="background.paper">
+          <Box p={1} bgcolor="grey.300">
+            <Button variant="contained" color="primary" onClick={() => generateText() }>
+              Generate
+            </Button>
+          </Box>
+        </Box>
+        <Box display="flex" justifyContent="center" m={1} p={1} bgcolor="background.paper">
+          <Box p={1} bgcolor="grey.300">
+            <Card>
+              <CardContent>
+                <div dangerouslySetInnerHTML={text} />
+              </CardContent>
+            </Card>
+          </Box>
+        </Box>
+      </div>
     </React.Fragment>
   )
-}
-
-// This function gets called at build time
-export async function getStaticProps() {
-  const todos: Todos[] = await todoAPI()
-  // By returning { props: todos }, the Blog component
-  // will receive `posts` as a prop at build time
-  return {
-    props: {
-      todos,
-    }
-  }
 }
 
 /**

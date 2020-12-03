@@ -1,0 +1,21 @@
+export default [
+  'Apple',
+  'Avocado',
+  'Akee',
+  'Araza',
+  'Alibertia',
+  'Apricot',
+  'Blueberry',
+  'Blackberry',
+  'Barberry',
+  'Banana',
+  'Bignay',
+  'Biriba',
+  'Breadfruit',
+  'Barbados Cherry',
+  'Bael Fruit',
+  'Black Sapote',
+  'Bilberry',
+  'Boysenberry',
+  'Balckcurrant'
+]
